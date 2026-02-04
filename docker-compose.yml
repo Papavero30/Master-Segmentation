@@ -1,0 +1,219 @@
+version: '3.8'
+
+# Docker Compose untuk MASTER NODE (Server: 100.79.202.62)
+# Services: RabbitMQ, Redis, PostgreSQL, Backend, GDCM, Monitoring
+# Worker services TIDAK dijalankan di master - workers di PC-A & PC-B
+
+services:
+  # ============================================================================
+  # INFRASTRUCTURE SERVICES
+  # ============================================================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: brainnav-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-brainnav}
+      POSTGRES_USER: ${DB_USER:-brainnav}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-brainnav_secure_password_change_me}
+    ports:
+      - "0.0.0.0:5433:5432"  # Port 5433 (host) -> 5432 (container) - avoid conflict
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-brainnav}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - brainnav-network
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: brainnav-rabbitmq
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-brainnav}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-brainnav_secure_password_change_me}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-brainnav_vhost}
+    ports:
+      - "0.0.0.0:5673:5672"      # AMQP port 5673 (host) -> 5672 (container)
+      - "0.0.0.0:15673:15672"    # Management UI port 15673
+      - "0.0.0.0:15693:15692"    # Prometheus metrics port 15693
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./rabbitmq/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - brainnav-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: brainnav-redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "0.0.0.0:6380:6379"  # Port 6380 (host) -> 6379 (container) - avoid conflict
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - brainnav-network
+    restart: unless-stopped
+
+  # ============================================================================
+  # APPLICATION SERVICES
+  # ============================================================================
+
+  gdcm-service:
+    build:
+      context: ./gdcm
+      dockerfile: Dockerfile
+    container_name: brainnav-gdcm-service
+    environment:
+      FLASK_ENV: production
+      GDCM_PORT: 5000
+      LOG_LEVEL: INFO
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data/dicom:/app/data/dicom:ro
+      - ./data/gdcm:/app/data/gdcm
+      - ./cache/scan:/app/cache:rw
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - brainnav-network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+
+  brainnav-backend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: app
+    container_name: brainnav-backend
+    env_file:
+      - .env.master
+    environment:
+      # Server
+      PORT: 8443
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      ENV: production
+      
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-brainnav}
+      DB_PASS: ${DB_PASSWORD:-brainnav_secure_password_change_me}
+      DB_NAME: ${DB_NAME:-brainnav}
+      
+      # RabbitMQ (use container name internally)
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-brainnav}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-brainnav_secure_password_change_me}
+      RABBITMQ_VHOST: ${RABBITMQ_VHOST:-brainnav_vhost}
+      
+      # Redis (use container name internally)
+      REDIS_URL: redis://:${REDIS_PASSWORD:-brainnav_secure_password_change_me}@redis:6379/0
+      
+      # GDCM Service
+      GDCM_SERVICE_URL: http://gdcm-service:5000
+      
+      # JWT & Security
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ACCESS_TOKEN_EXPIRED_AT: ${JWT_ACCESS_TOKEN_EXPIRED_AT:-3600}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+    ports:
+      - "0.0.0.0:8443:8443"  # Expose ke network
+      - "6060:6060"  # Metrics
+    volumes:
+      - ./data:/app/data
+      - ./cache:/app/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8443/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - brainnav-network
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ============================================================================
+  # MONITORING & OBSERVABILITY
+  # ============================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: brainnav-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    ports:
+      - "0.0.0.0:9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - brainnav-network
+    restart: unless-stopped
+    depends_on:
+      - brainnav-backend
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: brainnav-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    ports:
+      - "0.0.0.0:3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - brainnav-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  brainnav-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

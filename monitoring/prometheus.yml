@@ -1,0 +1,44 @@
+# Prometheus Configuration
+# Path: monitoring/prometheus.yml
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'brainnav'
+    environment: 'development'
+
+scrape_configs:
+  # Backend metrics
+  - job_name: 'brainnav-backend'
+    static_configs:
+      - targets: ['brainnav-backend:8443']
+        labels:
+          service: 'backend'
+
+  # RabbitMQ metrics
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+        labels:
+          service: 'rabbitmq'
+
+  # Redis metrics (requires redis_exporter)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+
+  # Worker metrics (custom exporter in Python)
+  - job_name: 'segmentation-workers'
+    dns_sd_configs:
+      - names:
+          - 'segmentation-worker'
+        type: 'A'
+        port: 8000
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

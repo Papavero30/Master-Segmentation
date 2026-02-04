@@ -1,0 +1,39 @@
+# Air configuration to speed up Go backend reloads and avoid scanning huge frontend/node_modules
+root = "."
+.tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/server ."
+bin = "./tmp/server"
+full_bin = ""
+include_ext = ["go"]
+exclude_dir = [
+  "BrainNav",      # frontend/electron stuff
+  "gdcm",          # python/gdcm service
+  "data",          # external data
+  "brainnav-db",   # db volume
+  "certs",         # certificates
+  "scripts",       # helper scripts
+  "input",
+  "output",
+  "tmp",
+  ".git",
+]
+exclude_file = []
+exclude_regex = []
+include_dir = []
+send_interrupt = true
+kill_delay = 500
+
+[log]
+time = true
+
+[color]
+app = "cyan"
+build = "yellow"
+main = "magenta"
+runner = "green"
+watcher = "blue"
+
+[misc]
+clean_on_exit = true
