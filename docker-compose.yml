@@ -17,7 +17,7 @@ services:
       POSTGRES_USER: ${DB_USER:-brainnav}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-brainnav_secure_password_change_me}
     ports:
-      - "0.0.0.0:5433:5432"  # Port 5433 (host) -> 5432 (container) - avoid conflict
+      - "0.0.0.0:5436:5432"  # Port 5436 (host) -> 5432 (container) - avoid conflict
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -38,9 +38,9 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-brainnav_secure_password_change_me}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-brainnav_vhost}
     ports:
-      - "0.0.0.0:5673:5672"      # AMQP port 5673 (host) -> 5672 (container)
-      - "0.0.0.0:15673:15672"    # Management UI port 15673
-      - "0.0.0.0:15693:15692"    # Prometheus metrics port 15693
+      - "0.0.0.0:5674:5672"      # AMQP port 5674 (host) -> 5672 (container)
+      - "0.0.0.0:15674:15672"    # Management UI port 15674
+      - "0.0.0.0:15694:15692"    # Prometheus metrics port 15694
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
@@ -59,12 +59,12 @@ services:
     container_name: brainnav-redis
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
-      - "0.0.0.0:6380:6379"  # Port 6380 (host) -> 6379 (container) - avoid conflict
+      - "0.0.0.0:6381:6379"  # Port 6381 (host) -> 6379 (container) - avoid conflict
     volumes:
       - redis_data:/data
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "BrainNav_Secure_2025!", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -86,13 +86,12 @@ services:
       GDCM_PORT: 5000
       LOG_LEVEL: INFO
     ports:
-      - "5000:5000"
+      - "5001:3000"
     volumes:
-      - ./data/dicom:/app/data/dicom:ro
-      - ./data/gdcm:/app/data/gdcm
+      - ./data:/app/data:rw
       - ./cache/scan:/app/cache:rw
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -109,6 +108,7 @@ services:
       dockerfile: ./Dockerfile
       target: app
     container_name: brainnav-backend
+    user: "1000:1000"  # Run as host user (mci) to allow writing to ./data volume
     env_file:
       - .env.master
     environment:
@@ -135,20 +135,24 @@ services:
       REDIS_URL: redis://:${REDIS_PASSWORD:-brainnav_secure_password_change_me}@redis:6379/0
       
       # GDCM Service
-      GDCM_SERVICE_URL: http://gdcm-service:5000
+      GDCM_SERVICE_URL: http://gdcm-service:3000
       
       # JWT & Security
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ACCESS_TOKEN_EXPIRED_AT: ${JWT_ACCESS_TOKEN_EXPIRED_AT:-3600}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+
+      # Upload Rate Limiting
+      MAX_UPLOADS_PER_MINUTE: ${MAX_UPLOADS_PER_MINUTE:-500}
     ports:
-      - "0.0.0.0:8443:8443"  # Expose ke network
-      - "6060:6060"  # Metrics
+      - "0.0.0.0:8444:8443"  # Expose ke network
+      - "6061:6060"  # Metrics
     volumes:
       - ./data:/app/data
       - ./cache:/app/cache
+      - ./.env.master:/app/.env:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8443/api/health"]
+      test: ["CMD-SHELL", "wget --no-check-certificate -q -O- https://localhost:8443/health || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -175,7 +179,7 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=30d'
     ports:
-      - "0.0.0.0:9090:9090"
+      - "0.0.0.0:9091:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
@@ -193,7 +197,7 @@ services:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_INSTALL_PLUGINS: grafana-piechart-panel
     ports:
-      - "0.0.0.0:3000:3000"
+      - "0.0.0.0:3005:3000"
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
@@ -216,4 +220,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 10.50.0.0/16

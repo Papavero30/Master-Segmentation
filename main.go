@@ -239,10 +239,29 @@ func main() {
 		}
 	}
 
-	// workerQueue := services.NewJobQueue(100)
-	// logger.Info("Background job queue initialized with buffer size: 100")
+	// Initialize background worker queue for GDCM compression
+	workerQueue := services.NewWorkerQueue(100)
+	logger.Info("Background job queue initialized with buffer size: 100")
 
-	scansService := services.NewScansService(gormDB, logger, scansRepo, profilesService, gdcmService, gdcmClient, nil)
+	scansService := services.NewScansService(gormDB, logger, scansRepo, profilesService, gdcmService, gdcmClient, workerQueue)
+
+	// Start worker to process compression jobs
+	workerQueue.Start(func(job services.Job) bool {
+		switch job.Type {
+		case services.JobTypeCompress:
+			logger.Info("[Worker] Processing compression job for sid: %s (attempt %d/%d)", job.SID, job.Attempts, job.MaxRetry)
+			if err := scansService.ProcessCompressionJob(job.SID); err != nil {
+				logger.Error("[Worker] Compression failed for sid %s: %v", job.SID, err)
+				return false
+			}
+			logger.Info("[Worker] Compression completed for sid: %s", job.SID)
+			return true
+		default:
+			logger.Warning("[Worker] Unknown job type: %s", job.Type)
+			return true
+		}
+	})
+	logger.Info("Background worker started for GDCM compression")
 
 	// Initialize Segmentation Service (optional - only if Redis and RabbitMQ available)
 	var segmentationService *services.SegmentationService
@@ -298,8 +317,8 @@ func main() {
 	httpSrv := &http.Server{
 		Addr:           addr,
 		Handler:        router,
-		ReadTimeout:    60 * time.Second,
-		WriteTimeout:   60 * time.Second,
+		ReadTimeout:    10 * time.Minute,  // Extended for large file uploads (ZIP bundles)
+		WriteTimeout:   10 * time.Minute,  // Extended for large file uploads
 		IdleTimeout:    120 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}

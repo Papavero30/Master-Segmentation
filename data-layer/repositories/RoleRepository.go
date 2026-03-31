@@ -68,3 +68,4 @@ func (r *roleRepositoryImpl) HasRole(deviceID uint, role entities.Role) (bool, e
 		Count(&count).Error
 	return count > 0, err
 }
+

@@ -19,7 +19,7 @@ COPY . .
 COPY --from=build /bin/brainnav /bin/brainnav
 CMD ["air"]
 
-FROM alpine:3.20 AS runtime
+FROM alpine:3.20 AS app
 WORKDIR /app
 ENV APP_ENV=production
 

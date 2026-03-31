@@ -67,7 +67,7 @@ func NewServer(serviceProvider ServiceProvider, jwtManager *utils.JWTManager, de
 	corsMiddleware := middleware.SecureCorsMiddleware()
 
 	rateLimiter := middleware.NewDeviceRateLimiter(rate.Every(time.Minute/10000), 500)
-	validationMiddleware := middleware.NewValidationMiddleware()
+	validationMiddleware := middleware.NewValidationMiddleware().WithMaxBodySize(512 * 1024 * 1024) // 512MB for ZIP uploads
 	securityHeaders := middleware.NewSecurityHeaders()
 
 	return &Server{

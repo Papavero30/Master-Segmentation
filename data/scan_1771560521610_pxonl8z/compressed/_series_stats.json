@@ -1,0 +1,296 @@
+{
+  "status": "success",
+  "sid": "scan_1771560521610_pxonl8z",
+  "operation": "compress",
+  "total_groups": 1,
+  "files_processed": 32,
+  "files_failed": 0,
+  "original_size_bytes": 16836352,
+  "compressed_size_bytes": 3457502,
+  "compression_ratio_percent": 79.46406680021896,
+  "transfer_syntax": "1.2.840.10008.1.2.4.90",
+  "manifest_path": "scan_1771560521610_pxonl8z/manifest.json",
+  "manifest": {
+    "sid": "scan_1771560521610_pxonl8z",
+    "generated_at": "2026-02-20T04:08:50.314577Z",
+    "transfer_syntax": "1.2.840.10008.1.2.4.90",
+    "total_groups": 1,
+    "groups": [
+      {
+        "group_id": "scan_1771560521610_pxonl8z",
+        "group_index": 0,
+        "slice_count": 32,
+        "files": [
+          {
+            "path": "compressed/22610",
+            "size": 120292,
+            "hash": "715b6b28913b9ea9542022bcc298153cfe492544801ac5b0306cc48256160068",
+            "instance_number": 1,
+            "slice_location": 74.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.691"
+          },
+          {
+            "path": "compressed/22640",
+            "size": 125598,
+            "hash": "8514b9e20bcd41da4dfaa83953e546cc4ef6038efc8ec3cea7fcaf7dfd476242",
+            "instance_number": 2,
+            "slice_location": 79.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.692"
+          },
+          {
+            "path": "compressed/22579",
+            "size": 129716,
+            "hash": "5afa72140314fcf91988f72480b164377758df1569afeffa0be656dce3442761",
+            "instance_number": 3,
+            "slice_location": 84.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.690"
+          },
+          {
+            "path": "compressed/22730",
+            "size": 132574,
+            "hash": "feef64902b3b84b573c0ab0a98b38ae0fcb297cd349896a086fb2e1c215c239b",
+            "instance_number": 4,
+            "slice_location": 89.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.695"
+          },
+          {
+            "path": "compressed/22700",
+            "size": 135714,
+            "hash": "ff8bcace8b5e9c34009a08eea86185fc7dcd2d16c858f78a6855d7e1737bc1f5",
+            "instance_number": 5,
+            "slice_location": 94.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.694"
+          },
+          {
+            "path": "compressed/22670",
+            "size": 136340,
+            "hash": "eb2199cdf32ac9d9d90521db74c2322cf79c7bc4deb142e1c656cbd920556c6f",
+            "instance_number": 6,
+            "slice_location": 99.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.693"
+          },
+          {
+            "path": "compressed/22760",
+            "size": 134326,
+            "hash": "e7be72ba928a1a36efda7d90b311ccb7cc42a49a141a20f93f24007d41ce5d19",
+            "instance_number": 7,
+            "slice_location": 104.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.696"
+          },
+          {
+            "path": "compressed/22850",
+            "size": 131728,
+            "hash": "ef93b4001ac562ca93df19b02fdc96b1f20bebf6d29e2f378f2ba368d2495cc3",
+            "instance_number": 8,
+            "slice_location": 109.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.699"
+          },
+          {
+            "path": "compressed/22790",
+            "size": 126942,
+            "hash": "9593e4a162a07a74b38bcea98a92afb8bf68c63e3c325d3c85950827cd3154c5",
+            "instance_number": 9,
+            "slice_location": 114.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.697"
+          },
+          {
+            "path": "compressed/22820",
+            "size": 122566,
+            "hash": "ed657953e6267ad2610de8d94886b41a331551d5d70e1379cca6d3573d0d54be",
+            "instance_number": 10,
+            "slice_location": 119.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.698"
+          },
+          {
+            "path": "compressed/22970",
+            "size": 117178,
+            "hash": "48dcb477379c871287dffef4663246f69fc8b86b6a18ad6eeb1e7e9659143065",
+            "instance_number": 11,
+            "slice_location": 124.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.701"
+          },
+          {
+            "path": "compressed/23000",
+            "size": 115676,
+            "hash": "ce0b79e78231dc54ae39f9f92c3da8e6beba8670a601a0809b39f8c90e33179a",
+            "instance_number": 12,
+            "slice_location": 129.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.702"
+          },
+          {
+            "path": "compressed/23030",
+            "size": 115202,
+            "hash": "2bac53e46281007194a68082fb13411769dee36c261cb4faea65f9d1398bf517",
+            "instance_number": 13,
+            "slice_location": 134.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.703"
+          },
+          {
+            "path": "compressed/22940",
+            "size": 113822,
+            "hash": "09a4408486826960fec89ecb3a5d5eba64a34963cb59081e937e488d8075bf9f",
+            "instance_number": 14,
+            "slice_location": 139.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.700"
+          },
+          {
+            "path": "compressed/23150",
+            "size": 113406,
+            "hash": "33e64119076f90af5021f91050613e21612bf1b194bd2306f090600b0d6d4d01",
+            "instance_number": 15,
+            "slice_location": 144.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.707"
+          },
+          {
+            "path": "compressed/23060",
+            "size": 113186,
+            "hash": "f6e78edd55a7759f817ad2d2dab768249cad0bc7d3b3e57b45253149af618e90",
+            "instance_number": 16,
+            "slice_location": 149.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.704"
+          },
+          {
+            "path": "compressed/23180",
+            "size": 112562,
+            "hash": "02e9d0b74468e4b7de2b825890ac2c5638672b7f15bc0950fb4f337049efd1da",
+            "instance_number": 17,
+            "slice_location": 154.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.708"
+          },
+          {
+            "path": "compressed/23090",
+            "size": 111138,
+            "hash": "afdf15e2cb3ca3c1ae7ddfc516f2f2d58298aab846987e376eff9cc461097724",
+            "instance_number": 18,
+            "slice_location": 159.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.705"
+          },
+          {
+            "path": "compressed/23120",
+            "size": 109340,
+            "hash": "004f1ad868e39c7f52e17650e9848e5de5d12f045448cb09a3c4333df3237351",
+            "instance_number": 19,
+            "slice_location": 164.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.706"
+          },
+          {
+            "path": "compressed/23360",
+            "size": 106646,
+            "hash": "5fc0fdfae030eb759b2786cdd787c84542e59208e163ef7f966b9d154b78a707",
+            "instance_number": 20,
+            "slice_location": 169.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.713"
+          },
+          {
+            "path": "compressed/23270",
+            "size": 103236,
+            "hash": "e9defd7699035ec002b67b76a20fd5ead79dfe8a5392f89a7ceda991b6eea603",
+            "instance_number": 21,
+            "slice_location": 174.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.710"
+          },
+          {
+            "path": "compressed/23330",
+            "size": 100944,
+            "hash": "8eb5d37fb1a650af453dbb0249dadd8d5e2c8f170880e3a7de1f71cc3a6031c6",
+            "instance_number": 22,
+            "slice_location": 179.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.712"
+          },
+          {
+            "path": "compressed/23300",
+            "size": 98744,
+            "hash": "d016acc5eb47ff5b93429f73c308396fd7fc9212ab14b3af45c98f7b5395289b",
+            "instance_number": 23,
+            "slice_location": 184.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.711"
+          },
+          {
+            "path": "compressed/23210",
+            "size": 97216,
+            "hash": "156d09f241998ffbc61b7278b09bc639e2d35a85beac6e3f4ee47a5304f3f350",
+            "instance_number": 24,
+            "slice_location": 189.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.709"
+          },
+          {
+            "path": "compressed/23420",
+            "size": 94278,
+            "hash": "0794cae7e2ed659646f928ff466044a68471a63c32706e3e95b249b6d5980638",
+            "instance_number": 25,
+            "slice_location": 194.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.715"
+          },
+          {
+            "path": "compressed/23450",
+            "size": 91466,
+            "hash": "03a3ea06c54a596fc62e46be9c9ac588fce47abee8d798fdc3e33d0d8c284042",
+            "instance_number": 26,
+            "slice_location": 199.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.716"
+          },
+          {
+            "path": "compressed/23390",
+            "size": 88184,
+            "hash": "8c3756cd4db706fa76658827446e6e115a6a981cb975de2669b5c3db86b0166a",
+            "instance_number": 27,
+            "slice_location": 204.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.714"
+          },
+          {
+            "path": "compressed/23510",
+            "size": 84506,
+            "hash": "a25cdda9fd249f1089e03e46b9e58ef3279eb3e300b3f2441fa6ab6fa70e6dad",
+            "instance_number": 28,
+            "slice_location": 209.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.718"
+          },
+          {
+            "path": "compressed/23540",
+            "size": 79882,
+            "hash": "bfc06c467096412a46dcb8efe67b07863c5d45d29f551c99d2470525447f7e65",
+            "instance_number": 29,
+            "slice_location": 214.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.719"
+          },
+          {
+            "path": "compressed/23480",
+            "size": 74038,
+            "hash": "c0eee8a00d0a0f5aabc1961dc3cbcfb4e4a9e6111c3caa11fd011607da7a596f",
+            "instance_number": 30,
+            "slice_location": 219.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.717"
+          },
+          {
+            "path": "compressed/23600",
+            "size": 62744,
+            "hash": "a880e90ccbd24ef37efadb93cfd0bbd05b114ecbadaae0b12b9d4779c4f133e8",
+            "instance_number": 31,
+            "slice_location": 224.58,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.720"
+          },
+          {
+            "path": "compressed/23630",
+            "size": 58312,
+            "hash": "f808cae98243f46b2268106a00c08dd9fd7d33afdffa2f7a0f584f7b2308f4f5",
+            "instance_number": 32,
+            "slice_location": 229.62,
+            "sop_instance_uid": "1.3.6.1.4.1.5962.1.1.0.0.0.1196533885.18148.0.721"
+          }
+        ],
+        "stats": {
+          "original_size_bytes": 16836352,
+          "compressed_size_bytes": 3457502,
+          "compression_ratio_percent": 79.46406680021896
+        }
+      }
+    ],
+    "stats": {
+      "original_size_bytes": 16836352,
+      "compressed_size_bytes": 3457502,
+      "compression_ratio_percent": 79.46406680021896,
+      "files_processed": 32,
+      "files_failed": 0
+    }
+  }
+}

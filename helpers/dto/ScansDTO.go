@@ -100,3 +100,21 @@ type ScanManifestResponse struct {
 	Files          []ScanManifestFile `json:"files"`
 	Stats          ScanManifestStats  `json:"stats"`
 }
+
+// ZipUploadResponse is the response for bulk ZIP upload
+type ZipUploadResponse struct {
+	Message       string   `json:"message"`
+	Sid           string   `json:"sid"`
+	FilesExtracted int      `json:"files_extracted"`
+	FileNames     []string `json:"file_names"`
+	TotalBytes    int64    `json:"total_bytes"`
+}
+
+// BatchUploadResponse is the response for batch file upload (multiple files in one request)
+type BatchUploadResponse struct {
+	Message      string   `json:"message"`
+	Sid          string   `json:"sid"`
+	FilesUploaded int      `json:"files_uploaded"`
+	FileNames    []string `json:"file_names"`
+	TotalBytes   int64    `json:"total_bytes"`
+}

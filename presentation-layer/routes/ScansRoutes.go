@@ -17,6 +17,8 @@ func RegisterScansRoutes(router *mux.Router, controller *controller.ScansControl
 	router.HandleFunc("/scans/{sid}/init-upload", controller.InitUpload).Methods("POST", "OPTIONS")
 	router.HandleFunc("/scans/{sid}/status", controller.GetStatus).Methods("GET", "OPTIONS")
 	router.HandleFunc("/scans/{sid}/upload-file", controller.UploadFile).Methods("POST", "OPTIONS")
+	router.HandleFunc("/scans/{sid}/upload-zip", controller.UploadZip).Methods("POST", "OPTIONS")
+	router.HandleFunc("/scans/{sid}/upload-batch", controller.UploadBatch).Methods("POST", "OPTIONS")
 	router.HandleFunc("/scans/{sid}/upload", controller.UploadFile).Methods("POST", "OPTIONS")
 	router.HandleFunc("/scans/{sid}/complete", controller.CompleteUpload).Methods("POST", "OPTIONS")
 	router.HandleFunc("/scans/{sid}/abort", controller.AbortUpload).Methods("POST", "OPTIONS")

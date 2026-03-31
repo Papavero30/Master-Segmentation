@@ -40,7 +40,7 @@ type Config struct {
 
 var (
 	globalDB     *gorm.DB
-	globalConfig Config
+	globalConfig  Config
 )
 
 func LoadConfig() Config {

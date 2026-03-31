@@ -1,11 +1,14 @@
 package services
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"fmt"
 	"hash"
 	"io"
+	"mime/multipart"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -192,6 +195,8 @@ type ScansService interface {
 	InitUpload(ctx context.Context, sid, profileFirstUid string, expected int, fileNames []string, patientNameHint string) (*dto.ScansResponse, error)
 	GetStatus(ctx context.Context, sid string) (*dto.ScansResponse, error)
 	UploadFileChunk(ctx context.Context, sid, relPath string, r io.Reader, size int64) error
+	UploadZip(ctx context.Context, sid string, r io.Reader, size int64) (*dto.ZipUploadResponse, error)
+	UploadBatch(ctx context.Context, sid string, files []*multipart.FileHeader) (*dto.BatchUploadResponse, error)
 	CompleteUpload(ctx context.Context, sid string, force bool) (*dto.ScansResponse, error)
 	AbortUpload(ctx context.Context, sid string) error
 	GetManifest(ctx context.Context, sid string) (*dto.ScanManifestResponse, error)
@@ -881,6 +886,199 @@ func (s *scansServiceImpl) UploadFileChunk(ctx context.Context, sid, relPath str
 
 	return nil
 }
+
+// UploadZip handles bulk upload of DICOM files as a ZIP archive
+// This is much faster than uploading files one by one over the network
+func (s *scansServiceImpl) UploadZip(ctx context.Context, sid string, r io.Reader, size int64) (*dto.ZipUploadResponse, error) {
+	ownerID := getOwnerDeviceIDFromCtx(ctx)
+	s.logger.Info("[ZIP-UPLOAD] Starting ZIP upload for sid: %s, size: %d bytes", sid, size)
+
+	// Verify scan exists and is in uploading state
+	sc, err := s.scansRepo.GetBySid(sid, ownerID)
+	if err != nil {
+		return nil, utils.NewNotFoundError("Scan", sid)
+	}
+	if sc.IsFinal {
+		return nil, utils.NewBadRequestError("Cannot upload to finalized scan")
+	}
+	if sc.UploadStatus != "uploading" {
+		return nil, utils.NewBadRequestError(fmt.Sprintf("Scan is not in uploading state (current: %s)", sc.UploadStatus))
+	}
+
+	// Read ZIP content into memory
+	zipData, err := io.ReadAll(r)
+	if err != nil {
+		s.logger.Error("[ZIP-UPLOAD] Failed to read ZIP data: %v", err)
+		return nil, utils.NewInternalServerError("Failed to read ZIP file", err)
+	}
+
+	// Open ZIP archive
+	zipReader, err := zip.NewReader(bytes.NewReader(zipData), int64(len(zipData)))
+	if err != nil {
+		s.logger.Error("[ZIP-UPLOAD] Failed to open ZIP archive: %v", err)
+		return nil, utils.NewBadRequestError("Invalid ZIP file: " + err.Error())
+	}
+
+	// Prepare target directory
+	targetDir := filepath.Join(sharedInputDir(), sid, "original")
+	if err := os.MkdirAll(targetDir, 0755); err != nil {
+		s.logger.Error("[ZIP-UPLOAD] Failed to create target directory: %v", err)
+		return nil, utils.NewInternalServerError("Failed to create upload directory", err)
+	}
+
+	// Extract files
+	var extractedFiles []string
+	var totalBytes int64
+
+	for _, zipFile := range zipReader.File {
+		// Skip directories
+		if zipFile.FileInfo().IsDir() {
+			continue
+		}
+
+		// Get just the filename (ignore directory structure in ZIP)
+		fileName := filepath.Base(zipFile.Name)
+
+		// Skip hidden files and non-DICOM looking files
+		if strings.HasPrefix(fileName, ".") || strings.HasPrefix(fileName, "__") {
+			continue
+		}
+
+		// Open file in ZIP
+		rc, err := zipFile.Open()
+		if err != nil {
+			s.logger.Warning("[ZIP-UPLOAD] Failed to open file in ZIP: %s - %v", fileName, err)
+			continue
+		}
+
+		// Read file content
+		content, err := io.ReadAll(rc)
+		rc.Close()
+		if err != nil {
+			s.logger.Warning("[ZIP-UPLOAD] Failed to read file from ZIP: %s - %v", fileName, err)
+			continue
+		}
+
+		// Write to target directory
+		targetPath := filepath.Join(targetDir, fileName)
+		if err := os.WriteFile(targetPath, content, 0644); err != nil {
+			s.logger.Error("[ZIP-UPLOAD] Failed to write file: %s - %v", fileName, err)
+			continue
+		}
+
+		// Calculate hash and add to database
+		hash := sha256.Sum256(content)
+		hashStr := fmt.Sprintf("%x", hash[:])
+		relPath := "original/" + fileName
+
+		if err := s.scansRepo.AddFileHash(sid, ownerID, relPath, hashStr, int64(len(content))); err != nil {
+			s.logger.Warning("[ZIP-UPLOAD] Failed to add file hash: %s - %v", fileName, err)
+		}
+
+		extractedFiles = append(extractedFiles, fileName)
+		totalBytes += int64(len(content))
+
+		// Increment received file count
+		if err := s.scansRepo.IncrementReceivedFileCount(sid, ownerID); err != nil {
+			s.logger.Warning("[ZIP-UPLOAD] Failed to increment file count: %v", err)
+		}
+	}
+
+	s.logger.Info("[ZIP-UPLOAD] Extracted %d files (%d bytes) for sid: %s", len(extractedFiles), totalBytes, sid)
+
+	return &dto.ZipUploadResponse{
+		Message:        fmt.Sprintf("Successfully extracted %d files from ZIP", len(extractedFiles)),
+		Sid:            sid,
+		FilesExtracted: len(extractedFiles),
+		FileNames:      extractedFiles,
+		TotalBytes:     totalBytes,
+	}, nil
+}
+
+// UploadBatch handles batch upload of multiple files in a single request
+// This reduces HTTP overhead compared to uploading files one by one
+func (s *scansServiceImpl) UploadBatch(ctx context.Context, sid string, files []*multipart.FileHeader) (*dto.BatchUploadResponse, error) {
+	ownerID := getOwnerDeviceIDFromCtx(ctx)
+	sc, err := s.scansRepo.GetBySid(sid, ownerID)
+	if err != nil {
+		return nil, err
+	}
+	if sc.IsFinal {
+		return nil, utils.NewBadRequestError("Cannot upload to finalized scan")
+	}
+	if sc.UploadStatus != "uploading" {
+		return nil, utils.NewBadRequestError(fmt.Sprintf("Scan is not in uploading state (current: %s)", sc.UploadStatus))
+	}
+
+	// Prepare target directory
+	targetDir := filepath.Join(sharedInputDir(), sid, "original")
+	if err := os.MkdirAll(targetDir, 0755); err != nil {
+		s.logger.Error("[BATCH-UPLOAD] Failed to create target directory: %v", err)
+		return nil, utils.NewInternalServerError("Failed to create upload directory", err)
+	}
+
+	var uploadedFiles []string
+	var totalBytes int64
+
+	for _, fileHeader := range files {
+		fileName := filepath.Base(fileHeader.Filename)
+
+		// Skip hidden files
+		if strings.HasPrefix(fileName, ".") || strings.HasPrefix(fileName, "__") {
+			continue
+		}
+
+		// Open the uploaded file
+		file, err := fileHeader.Open()
+		if err != nil {
+			s.logger.Warning("[BATCH-UPLOAD] Failed to open file: %s - %v", fileName, err)
+			continue
+		}
+
+		// Read file content
+		content, err := io.ReadAll(file)
+		file.Close()
+		if err != nil {
+			s.logger.Warning("[BATCH-UPLOAD] Failed to read file: %s - %v", fileName, err)
+			continue
+		}
+
+		// Write to target directory
+		targetPath := filepath.Join(targetDir, fileName)
+		if err := os.WriteFile(targetPath, content, 0644); err != nil {
+			s.logger.Error("[BATCH-UPLOAD] Failed to write file: %s - %v", fileName, err)
+			continue
+		}
+
+		// Calculate hash and add to database
+		hash := sha256.Sum256(content)
+		hashStr := fmt.Sprintf("%x", hash[:])
+		relPath := "original/" + fileName
+
+		if err := s.scansRepo.AddFileHash(sid, ownerID, relPath, hashStr, int64(len(content))); err != nil {
+			s.logger.Warning("[BATCH-UPLOAD] Failed to add file hash: %s - %v", fileName, err)
+		}
+
+		uploadedFiles = append(uploadedFiles, fileName)
+		totalBytes += int64(len(content))
+
+		// Increment received file count
+		if err := s.scansRepo.IncrementReceivedFileCount(sid, ownerID); err != nil {
+			s.logger.Warning("[BATCH-UPLOAD] Failed to increment file count: %v", err)
+		}
+	}
+
+	s.logger.Info("[BATCH-UPLOAD] Uploaded %d files (%d bytes) for sid: %s", len(uploadedFiles), totalBytes, sid)
+
+	return &dto.BatchUploadResponse{
+		Message:      fmt.Sprintf("Successfully uploaded %d files", len(uploadedFiles)),
+		Sid:          sid,
+		FilesUploaded: len(uploadedFiles),
+		FileNames:    uploadedFiles,
+		TotalBytes:   totalBytes,
+	}, nil
+}
+
 func (s *scansServiceImpl) CompleteUpload(ctx context.Context, sid string, force bool) (*dto.ScansResponse, error) {
 	ownerID := getOwnerDeviceIDFromCtx(ctx)
 	sc, err := s.scansRepo.GetBySid(sid, ownerID)
@@ -958,24 +1156,31 @@ func (s *scansServiceImpl) CompleteUpload(ctx context.Context, sid string, force
 		s.logger.Info("[CompleteUpload]  Successfully extracted and stored metadata for sid: %s", sid)
 	}
 
-	if s.workerQueue == nil {
-		return nil, utils.NewInternalServerError("worker queue unavailable", nil)
+	// If workerQueue is available, enqueue compression job
+	// Otherwise, mark as completed without compression (compression on-demand via decompress endpoint)
+	if s.workerQueue != nil {
+		if err := s.scansRepo.SetUploadStatus(sid, ownerID, "pending", nil); err != nil {
+			return nil, utils.NewInternalServerError("failed to update status", err)
+		}
+
+		s.workerQueue.Enqueue(Job{
+			ID:       fmt.Sprintf("compress-%s-%d", sid, time.Now().Unix()),
+			Type:     JobTypeCompress,
+			SID:      sid,
+			Enqueued: time.Now(),
+			Attempts: 0,
+			MaxRetry: 3,
+		})
+
+		s.logger.Info("[CompleteUpload] Compression job enqueued for sid: %s", sid)
+	} else {
+		// No worker queue - mark upload as completed without compression
+		// Original files are available, compression will happen on-demand when user requests decompress
+		if err := s.scansRepo.FinalizeScan(sid, ownerID, "", "completed"); err != nil {
+			return nil, utils.NewInternalServerError("failed to finalize scan", err)
+		}
+		s.logger.Info("[CompleteUpload] Upload completed without background compression for sid: %s (workerQueue not configured)", sid)
 	}
-
-	if err := s.scansRepo.SetUploadStatus(sid, ownerID, "pending", nil); err != nil {
-		return nil, utils.NewInternalServerError("failed to update status", err)
-	}
-
-	s.workerQueue.Enqueue(Job{
-		ID:       fmt.Sprintf("compress-%s-%d", sid, time.Now().Unix()),
-		Type:     JobTypeCompress,
-		SID:      sid,
-		Enqueued: time.Now(),
-		Attempts: 0,
-		MaxRetry: 3,
-	})
-
-	s.logger.Info("[CompleteUpload] Compression job enqueued for sid: %s", sid)
 
 	updated, _ := s.scansRepo.GetBySid(sid, ownerID)
 	r := mapScanToDTO(*updated)

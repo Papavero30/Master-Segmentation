@@ -249,6 +249,71 @@ func (c *ScansController) UploadFile(w http.ResponseWriter, r *http.Request) {
 	c.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "uploaded", "rel_path": relPath})
 }
 
+// UploadZip handles bulk upload of DICOM files as a ZIP archive
+// This is much faster than uploading files one by one
+func (c *ScansController) UploadZip(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	sid := vars["sid"]
+	if sid == "" {
+		c.RespondWithError(w, utils.NewBadRequestError("sid required"))
+		return
+	}
+
+	// Parse multipart form with large max memory (512MB for ZIP files)
+	if err := r.ParseMultipartForm(512 << 20); err != nil {
+		c.RespondWithError(w, utils.NewBadRequestError("invalid multipart form: "+err.Error()))
+		return
+	}
+
+	file, header, err := r.FormFile("zip_file")
+	if err != nil {
+		c.RespondWithError(w, utils.NewBadRequestError("zip_file required"))
+		return
+	}
+	defer file.Close()
+
+	// Call service to handle ZIP extraction
+	result, err := c.scansService.UploadZip(r.Context(), sid, file, header.Size)
+	if err != nil {
+		c.RespondWithError(w, err)
+		return
+	}
+
+	c.RespondWithJSON(w, http.StatusOK, result)
+}
+
+// UploadBatch handles batch upload of multiple DICOM files in a single request
+// This reduces HTTP overhead compared to uploading files one by one
+func (c *ScansController) UploadBatch(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	sid := vars["sid"]
+	if sid == "" {
+		c.RespondWithError(w, utils.NewBadRequestError("sid required"))
+		return
+	}
+
+	// Parse multipart form with large max memory (256MB for batch files)
+	if err := r.ParseMultipartForm(256 << 20); err != nil {
+		c.RespondWithError(w, utils.NewBadRequestError("invalid multipart form: "+err.Error()))
+		return
+	}
+
+	// Get all files from the "files" field
+	files := r.MultipartForm.File["files"]
+	if len(files) == 0 {
+		c.RespondWithError(w, utils.NewBadRequestError("no files provided"))
+		return
+	}
+
+	result, err := c.scansService.UploadBatch(r.Context(), sid, files)
+	if err != nil {
+		c.RespondWithError(w, err)
+		return
+	}
+
+	c.RespondWithJSON(w, http.StatusOK, result)
+}
+
 func (c *ScansController) CompleteUpload(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	sid := vars["sid"]

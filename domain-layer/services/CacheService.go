@@ -18,7 +18,7 @@ type CacheService struct {
 type CacheMetadata struct {
 	SID          string
 	FilePath     string
-	LastAccessed time.Time
+	LastAccessed time.Time	
 	CreatedAt    time.Time
 	FileSize     int64
 }
