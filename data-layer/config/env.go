@@ -36,11 +36,16 @@ type Config struct {
 	JWTPrivateKey             *rsa.PrivateKey
 	JWTPublicKey              *rsa.PublicKey
 	DisableHTTPSRedirect      bool
+	ChunkSize                 int
+	OverlapSize               int
+	QueueHomogen              string
+	QueueHeterogen            string
+	QueueLegacy               string
 }
 
 var (
 	globalDB     *gorm.DB
-	globalConfig  Config
+	globalConfig Config
 )
 
 func LoadConfig() Config {
@@ -85,6 +90,11 @@ func LoadConfig() Config {
 		TLSKeyPath:                getEnvOrDefault("TLS_KEY_PATH", "./certs/server.key"),
 		AppEnv:                    getEnvOrDefault("APP_ENV", "development"),
 		DisableHTTPSRedirect:      disableRedirect,
+		ChunkSize:                 getEnvIntOrDefault("CHUNK_SIZE", 256),
+		OverlapSize:               getEnvIntOrDefault("OVERLAP_SIZE", 32),
+		QueueHomogen:              getEnvOrDefault("QUEUE_HOMOGEN", "segmentation_tasks_homogen"),
+		QueueHeterogen:            getEnvOrDefault("QUEUE_HETEROGEN", "segmentation_tasks_heterogen"),
+		QueueLegacy:               getEnvOrDefault("QUEUE_LEGACY", "segmentation_tasks"),
 	}
 
 	// ✅ FIX: Use persistent JWT key manager instead of generating keys on every startup
@@ -121,6 +131,16 @@ func getEnvOrDefault(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
+	return defaultValue
+}
+
+func getEnvIntOrDefault(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if parsed, err := strconv.Atoi(value); err == nil {
+			return parsed
+		}
+	}
+
 	return defaultValue
 }
 

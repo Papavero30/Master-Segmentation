@@ -396,6 +396,61 @@ ALTER TABLE scans DROP COLUMN IF EXISTS cache_expires_at;`,
 			DROP INDEX IF EXISTS idx_user_roles_role;
 			DROP INDEX IF EXISTS idx_scan_files_sid;`,
 		},
+		{
+			Name: "007_add_segmentation_experiments",
+			UpSQL: `CREATE TABLE IF NOT EXISTS segmentation_experiments (
+				id SERIAL PRIMARY KEY,
+				task_id VARCHAR(64) UNIQUE NOT NULL,
+				scan_sid VARCHAR(64) NOT NULL,
+				slice_index INTEGER NOT NULL,
+				cluster_mode VARCHAR(20) NOT NULL,
+				chunk_size INTEGER NOT NULL,
+				overlap_size INTEGER NOT NULL,
+				total_chunks INTEGER NOT NULL,
+				submitted_at TIMESTAMPTZ NOT NULL,
+				completed_at TIMESTAMPTZ,
+				total_latency_ms INTEGER,
+				queue_wait_ms INTEGER,
+				inference_ms INTEGER,
+				merge_ms INTEGER,
+				dice_score DOUBLE PRECISION,
+				hausdorff_distance DOUBLE PRECISION,
+				status VARCHAR(20) NOT NULL,
+				error_message TEXT,
+				created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+			);
+
+			CREATE INDEX IF NOT EXISTS idx_seg_exp_cluster_mode ON segmentation_experiments(cluster_mode);
+			CREATE INDEX IF NOT EXISTS idx_seg_exp_submitted_at ON segmentation_experiments(submitted_at);
+
+			CREATE TABLE IF NOT EXISTS segmentation_chunk_logs (
+				id SERIAL PRIMARY KEY,
+				task_id VARCHAR(64) NOT NULL,
+				chunk_id INTEGER NOT NULL,
+				worker_name VARCHAR(128) NOT NULL,
+				gpu_type VARCHAR(64),
+				cluster_mode VARCHAR(20),
+				queue_wait_ms INTEGER,
+				inference_ms INTEGER,
+				total_chunk_ms INTEGER,
+				created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				UNIQUE (task_id, chunk_id),
+				FOREIGN KEY (task_id) REFERENCES segmentation_experiments(task_id) ON DELETE CASCADE
+			);
+
+			CREATE INDEX IF NOT EXISTS idx_chunk_logs_task_id ON segmentation_chunk_logs(task_id);
+			CREATE INDEX IF NOT EXISTS idx_chunk_logs_worker ON segmentation_chunk_logs(worker_name);
+			CREATE INDEX IF NOT EXISTS idx_chunk_logs_cluster_mode ON segmentation_chunk_logs(cluster_mode);
+			CREATE INDEX IF NOT EXISTS idx_chunk_logs_gpu_type ON segmentation_chunk_logs(gpu_type);`,
+			DownSQL: `DROP TABLE IF EXISTS segmentation_chunk_logs;
+			DROP TABLE IF EXISTS segmentation_experiments;
+			DROP INDEX IF EXISTS idx_seg_exp_cluster_mode;
+			DROP INDEX IF EXISTS idx_seg_exp_submitted_at;
+			DROP INDEX IF EXISTS idx_chunk_logs_task_id;
+			DROP INDEX IF EXISTS idx_chunk_logs_worker;
+			DROP INDEX IF EXISTS idx_chunk_logs_cluster_mode;
+			DROP INDEX IF EXISTS idx_chunk_logs_gpu_type;`,
+		},
 	}
 }
 

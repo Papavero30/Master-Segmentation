@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Docker Compose untuk MASTER NODE (Server: 100.79.202.62)
 # Services: RabbitMQ, Redis, PostgreSQL, Backend, GDCM, Monitoring
 # Worker services TIDAK dijalankan di master - workers di PC-A & PC-B
@@ -137,10 +135,8 @@ services:
       # GDCM Service
       GDCM_SERVICE_URL: http://gdcm-service:3000
       
-      # JWT & Security
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      JWT_ACCESS_TOKEN_EXPIRED_AT: ${JWT_ACCESS_TOKEN_EXPIRED_AT:-3600}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      # JWT & Security + Encryption: loaded from .env.master via env_file above
+      # (do NOT duplicate here — `environment:` overrides `env_file:` in Compose)
 
       # Upload Rate Limiting
       MAX_UPLOADS_PER_MINUTE: ${MAX_UPLOADS_PER_MINUTE:-500}
@@ -196,6 +192,9 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_INSTALL_PLUGINS: grafana-piechart-panel
+      DB_NAME: ${DB_NAME:-brainnav}
+      DB_USER: ${DB_USER:-brainnav}
+      DB_PASSWORD: ${DB_PASSWORD:-brainnav_secure_password_change_me}
     ports:
       - "0.0.0.0:3005:3000"
     volumes:

@@ -36,6 +36,8 @@ func autoMigrate(db *gorm.DB) {
 		&entities.Profiles{},
 		&entities.Scans{},
 		&entities.ScanFile{},
+		&entities.SegmentationExperiment{},
+		&entities.SegmentationChunkLog{},
 	); err != nil {
 		log.Printf("WARN: auto-migrate failed: %v", err)
 	}
@@ -182,6 +184,7 @@ func main() {
 	roleRepo := repositories.NewRoleRepository(gormDB)
 	profilesRepo := repositories.NewProfilesRepository(gormDB)
 	scansRepo := repositories.NewScansRepository(gormDB)
+	segmentationExpRepo := repositories.NewSegmentationExperimentRepository(gormDB)
 
 	roleService := services.NewRoleService(gormDB, logger, roleRepo, deviceRepo)
 
@@ -269,7 +272,18 @@ func main() {
 	segmentationEnabled := os.Getenv("SEGMENTATION_ENABLED")
 	if segmentationEnabled == "true" && redisClient != nil && rabbitConn != nil {
 		var err error
-		segmentationService, err = services.NewSegmentationService(logger, redisClient, rabbitConn, gdcmClient)
+		segmentationService, err = services.NewSegmentationService(
+			logger,
+			redisClient,
+			rabbitConn,
+			gdcmClient,
+			segmentationExpRepo,
+			cfg.ChunkSize,
+			cfg.OverlapSize,
+			cfg.QueueLegacy,
+			cfg.QueueHomogen,
+			cfg.QueueHeterogen,
+		)
 		if err != nil {
 			logger.Error("Failed to initialize SegmentationService: %v", err)
 		} else {
@@ -317,8 +331,8 @@ func main() {
 	httpSrv := &http.Server{
 		Addr:           addr,
 		Handler:        router,
-		ReadTimeout:    10 * time.Minute,  // Extended for large file uploads (ZIP bundles)
-		WriteTimeout:   10 * time.Minute,  // Extended for large file uploads
+		ReadTimeout:    10 * time.Minute, // Extended for large file uploads (ZIP bundles)
+		WriteTimeout:   10 * time.Minute, // Extended for large file uploads
 		IdleTimeout:    120 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}

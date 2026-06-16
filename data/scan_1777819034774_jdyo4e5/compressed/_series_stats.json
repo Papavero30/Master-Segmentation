@@ -1,0 +1,524 @@
+{
+  "status": "success",
+  "sid": "scan_1777819034774_jdyo4e5",
+  "operation": "compress",
+  "total_groups": 2,
+  "files_processed": 59,
+  "files_failed": 0,
+  "original_size_bytes": 31936636,
+  "compressed_size_bytes": 15036630,
+  "compression_ratio_percent": 52.91730162187401,
+  "transfer_syntax": "1.2.840.10008.1.2.4.90",
+  "manifest_path": "scan_1777819034774_jdyo4e5/manifest.json",
+  "manifest": {
+    "sid": "scan_1777819034774_jdyo4e5",
+    "generated_at": "2026-05-03T14:38:16.468011Z",
+    "transfer_syntax": "1.2.840.10008.1.2.4.90",
+    "total_groups": 2,
+    "groups": [
+      {
+        "group_id": "scan_1777819034774_jdyo4e5_group0",
+        "group_index": 0,
+        "slice_count": 50,
+        "files": [
+          {
+            "path": "compressed/Image-00278",
+            "size": 250486,
+            "hash": "d5912714d3880fc0a2e074de5a7fcddee63bc4102589de6d9c790f9e26fdc3f3",
+            "instance_number": 1,
+            "slice_location": 21.61754036,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.678"
+          },
+          {
+            "path": "compressed/Image-00277",
+            "size": 249444,
+            "hash": "86d864bdce1c06ce60f87737d7f7169b2626822297822759d51987d21e3d1b67",
+            "instance_number": 2,
+            "slice_location": 20.62137604,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.679"
+          },
+          {
+            "path": "compressed/Image-00279",
+            "size": 249630,
+            "hash": "020141c62c3b609192651e27539b26403a2dc93de9c20645d2c42c9de47659b0",
+            "instance_number": 3,
+            "slice_location": 19.62521172,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.680"
+          },
+          {
+            "path": "compressed/Image-00280",
+            "size": 249444,
+            "hash": "f1b15e19e6eb7b7f75267d00f72578b0d323218350b2bb5b3e83625f2d691826",
+            "instance_number": 4,
+            "slice_location": 18.62904739,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.681"
+          },
+          {
+            "path": "compressed/Image-00281",
+            "size": 249946,
+            "hash": "a28db0897441c4df7098523e340fefbcbdac7f923da6a6397a9533b22850a3ff",
+            "instance_number": 5,
+            "slice_location": 17.63288307,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.682"
+          },
+          {
+            "path": "compressed/Image-00282",
+            "size": 250490,
+            "hash": "434a038e08a5026baaa6ca0328ecc0e29e316af0b906515500a881120818ce82",
+            "instance_number": 6,
+            "slice_location": 16.63671875,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.683"
+          },
+          {
+            "path": "compressed/Image-00283",
+            "size": 250354,
+            "hash": "34d92bffb53b73dd71cfe0502a2cf480e6b54238008549a8c8a8b06406e4019f",
+            "instance_number": 7,
+            "slice_location": 15.64055443,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.684"
+          },
+          {
+            "path": "compressed/Image-00284",
+            "size": 250682,
+            "hash": "27a421347b1c6096a99bdd351aaf6993915e5d1b5d7b8384968bfc859b6da201",
+            "instance_number": 8,
+            "slice_location": 14.64439011,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.685"
+          },
+          {
+            "path": "compressed/Image-00285",
+            "size": 250630,
+            "hash": "38d2edf05d7a4c37032a29e856dd0e5b9fc660e06681e40e11173df3ab48e633",
+            "instance_number": 9,
+            "slice_location": 13.64822578,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.686"
+          },
+          {
+            "path": "compressed/Image-00286",
+            "size": 251404,
+            "hash": "ffb5d45d6b46133d4f17f49ac771b982950307bdbfa38c3a8272669b5ff08c69",
+            "instance_number": 10,
+            "slice_location": 12.65206146,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.687"
+          },
+          {
+            "path": "compressed/Image-00287",
+            "size": 251846,
+            "hash": "7e35b194c0faf9795fe3ca57a75ce096c4ed883756b50175ce09fc6c5654d340",
+            "instance_number": 11,
+            "slice_location": 11.65589714,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.688"
+          },
+          {
+            "path": "compressed/Image-00288",
+            "size": 252094,
+            "hash": "2ae78846041b61e4089832a19cc0f8d43f83495ef13e1f626afb911864172b41",
+            "instance_number": 12,
+            "slice_location": 10.65973282,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.689"
+          },
+          {
+            "path": "compressed/Image-00289",
+            "size": 252208,
+            "hash": "becf13e13899226975f451393351673bf0a3e4e72de0c7cf286467285f7cb7ce",
+            "instance_number": 13,
+            "slice_location": 9.663568497,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.690"
+          },
+          {
+            "path": "compressed/Image-00290",
+            "size": 252142,
+            "hash": "677e6560d44ee6e21640f4a091e18e7bccd87968e8313af71780cdc2e8c89389",
+            "instance_number": 14,
+            "slice_location": 8.667404175,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.691"
+          },
+          {
+            "path": "compressed/Image-00291",
+            "size": 253022,
+            "hash": "ec4cb026ab9cadfc226603d6a5f7c469b0609745b8daacc22c9f3960553e2fdd",
+            "instance_number": 15,
+            "slice_location": 7.671239376,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.692"
+          },
+          {
+            "path": "compressed/Image-00292",
+            "size": 253100,
+            "hash": "9f7a5b74019b4be4c8237f0b36872fa4836188106d285afda7137b532b765e3b",
+            "instance_number": 16,
+            "slice_location": 6.675074577,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.693"
+          },
+          {
+            "path": "compressed/Image-00293",
+            "size": 253456,
+            "hash": "07ef0028e0e0ba34bd3f5d78cd97a574f3e6c4bcb95bbc0b0407bfc4a407990f",
+            "instance_number": 17,
+            "slice_location": 5.678909779,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.694"
+          },
+          {
+            "path": "compressed/Image-00294",
+            "size": 253116,
+            "hash": "301b60046dcf09f4020747047c1cd5a147512a8170b289258f79d760d408f0ac",
+            "instance_number": 18,
+            "slice_location": 4.68274498,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.695"
+          },
+          {
+            "path": "compressed/Image-00295",
+            "size": 253636,
+            "hash": "353b2fdbe9ca4c2355cefd658d2180088e0fda96b4d25d2b671e6a10e6d3a153",
+            "instance_number": 19,
+            "slice_location": 3.68658042,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.696"
+          },
+          {
+            "path": "compressed/Image-00296",
+            "size": 253680,
+            "hash": "c38ab294efd479bb9c99b364981f2c68aa6411fb77665a973cb15a6a170ab8c1",
+            "instance_number": 20,
+            "slice_location": 2.690415859,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.697"
+          },
+          {
+            "path": "compressed/Image-00297",
+            "size": 254106,
+            "hash": "aff4b2677e0950e46890f423f1c3723e174f86f1f32a06d2a035b0a869f5fc60",
+            "instance_number": 21,
+            "slice_location": 1.69425118,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.698"
+          },
+          {
+            "path": "compressed/Image-00298",
+            "size": 253808,
+            "hash": "28ee3d513446c8dc990d8a98825cabe2192ceb70a6673183459296e9e10cb82c",
+            "instance_number": 22,
+            "slice_location": 0.6980865598,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.699"
+          },
+          {
+            "path": "compressed/Image-00299",
+            "size": 254130,
+            "hash": "01402b7844871e65ff9b890f72690658ff497de3f9955c794840a3024034183f",
+            "instance_number": 23,
+            "slice_location": -0.29807809,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.700"
+          },
+          {
+            "path": "compressed/Image-00300",
+            "size": 253844,
+            "hash": "b4423593dab65f58a85d16bfc7f2db1f07e086c8012752a8d22e9772d1ba16f3",
+            "instance_number": 24,
+            "slice_location": -1.29424274,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.701"
+          },
+          {
+            "path": "compressed/Image-00301",
+            "size": 253984,
+            "hash": "372be0707204d98982cc50538ee6215ca2fb5be9b8627a70541b08c9fe7797b8",
+            "instance_number": 25,
+            "slice_location": -2.290407419,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.702"
+          },
+          {
+            "path": "compressed/Image-00302",
+            "size": 254486,
+            "hash": "7fa8057c9728233f6031ff490c34b0627a7d71fbba4b3e5bb9b0c0f0e53792fa",
+            "instance_number": 26,
+            "slice_location": -3.28657198,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.703"
+          },
+          {
+            "path": "compressed/Image-00303",
+            "size": 254838,
+            "hash": "2b5bc6f7221ed7214c70923b7a69aed7e9c6082f84e12db6b762ee4bf0474491",
+            "instance_number": 27,
+            "slice_location": -4.282736778,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.704"
+          },
+          {
+            "path": "compressed/Image-00304",
+            "size": 255450,
+            "hash": "642b8038e250793b01c8968e0d981529980f30098f206d8b34c167187bda42dd",
+            "instance_number": 28,
+            "slice_location": -5.278901577,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.705"
+          },
+          {
+            "path": "compressed/Image-00305",
+            "size": 255158,
+            "hash": "ca369c97373f70f09188832bc76e098eef965ca649cdac3f84bdbe4903dbf580",
+            "instance_number": 29,
+            "slice_location": -6.275066376,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.706"
+          },
+          {
+            "path": "compressed/Image-00306",
+            "size": 256134,
+            "hash": "97757f659277fd6e854dc430817a16662577c97361888adb9a7d8ec1122dcb24",
+            "instance_number": 30,
+            "slice_location": -7.271231174,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.707"
+          },
+          {
+            "path": "compressed/Image-00307",
+            "size": 255466,
+            "hash": "f63959736ed5ca21f5aa3ab0b3772b366d5cdfd3f5cb57326e6b94d8aae5a6fb",
+            "instance_number": 31,
+            "slice_location": -8.267395973,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.708"
+          },
+          {
+            "path": "compressed/Image-00308",
+            "size": 255268,
+            "hash": "e54cffe13773b471b2ffc71cc13ab8b3f25ff537014717a7566d4d517d89ccce",
+            "instance_number": 32,
+            "slice_location": -9.263560295,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.709"
+          },
+          {
+            "path": "compressed/Image-00309",
+            "size": 256002,
+            "hash": "ef33ee9820e4aa56c71425ee9b427373f53c6ad7cd1a94a80d4c541ac0f9ecdd",
+            "instance_number": 33,
+            "slice_location": -10.25972462,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.710"
+          },
+          {
+            "path": "compressed/Image-00310",
+            "size": 255812,
+            "hash": "57fe9a14bbc1da78d412afea3dbfba986cf306a0ecdb2d003071d0538a84e393",
+            "instance_number": 34,
+            "slice_location": -11.25588894,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.711"
+          },
+          {
+            "path": "compressed/Image-00311",
+            "size": 255730,
+            "hash": "8426afb408cd29be9ff84e901aa46808704f32548951620a1f85960ff960f412",
+            "instance_number": 35,
+            "slice_location": -12.25205326,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.712"
+          },
+          {
+            "path": "compressed/Image-00312",
+            "size": 256210,
+            "hash": "179b0d8dc34c0d035280b65ea26e102a8567f83b7ecf01010d0dadbab08dcee0",
+            "instance_number": 36,
+            "slice_location": -13.24821758,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.713"
+          },
+          {
+            "path": "compressed/Image-00313",
+            "size": 256492,
+            "hash": "5085b17f05cabd4508c0443a6c2dcd93852f24fe267058c64dff3ee0c18d076c",
+            "instance_number": 37,
+            "slice_location": -14.2443819,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.714"
+          },
+          {
+            "path": "compressed/Image-00314",
+            "size": 256526,
+            "hash": "30e397d75f6d644e1e8da89e27db7e6ca8edc31a10a7c6d7c7f5c922630b2c6c",
+            "instance_number": 38,
+            "slice_location": -15.24054623,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.715"
+          },
+          {
+            "path": "compressed/Image-00315",
+            "size": 255934,
+            "hash": "dab24e53ba36da4eaa954ae34bb4a85fb56038753ecce140cd564c6594ece89c",
+            "instance_number": 39,
+            "slice_location": -16.2367115,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.716"
+          },
+          {
+            "path": "compressed/Image-00316",
+            "size": 256358,
+            "hash": "36e9f48e40b5fcafa3df926a120a34a6788d614507b59497209db88b111904ae",
+            "instance_number": 40,
+            "slice_location": -17.23287582,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.717"
+          },
+          {
+            "path": "compressed/Image-00317",
+            "size": 256412,
+            "hash": "150598018d6ccc526c0d26c366587ccc75cf9a89905d153baa8a31984f0db934",
+            "instance_number": 41,
+            "slice_location": -18.22904015,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.718"
+          },
+          {
+            "path": "compressed/Image-00318",
+            "size": 256282,
+            "hash": "ff3949aede56d4f537c2bd8174aa2fb38f2e083a70b7b499c6fef18fa4d6b53e",
+            "instance_number": 42,
+            "slice_location": -19.22520447,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.719"
+          },
+          {
+            "path": "compressed/Image-00319",
+            "size": 256732,
+            "hash": "11c54a08bf1011acf4c5051b6e11791d7be4b2a4574a01cbace3c250d7e23a02",
+            "instance_number": 43,
+            "slice_location": -20.22136879,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.720"
+          },
+          {
+            "path": "compressed/Image-00320",
+            "size": 256392,
+            "hash": "6c7893fa4fc98a0a579b70b4aa220b08051a34578b3ece20d804499a06ac9b25",
+            "instance_number": 44,
+            "slice_location": -21.21753311,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.721"
+          },
+          {
+            "path": "compressed/Image-00321",
+            "size": 257172,
+            "hash": "f5f14fbf606726dbcc2c802d37bdd7541cc593980157f1de0b85f207e983fd0c",
+            "instance_number": 45,
+            "slice_location": -22.21369743,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.722"
+          },
+          {
+            "path": "compressed/Image-00322",
+            "size": 257214,
+            "hash": "640a35a623e1188ae55784bb85d6412da7f9dd7e7439707ac3e306b01e59a247",
+            "instance_number": 46,
+            "slice_location": -23.20986176,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.723"
+          },
+          {
+            "path": "compressed/Image-00323",
+            "size": 257630,
+            "hash": "d8042bbfcbeea286326ae28c0df2345deba335dc4b8562bb28bdacf9917e8aee",
+            "instance_number": 47,
+            "slice_location": -24.20602608,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.724"
+          },
+          {
+            "path": "compressed/Image-00324",
+            "size": 257450,
+            "hash": "6c084931cf397ca5c48d0896e446685a5b9afbbea9e33e2b0bcb5d2cf04fdaed",
+            "instance_number": 48,
+            "slice_location": -25.2021904,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.725"
+          },
+          {
+            "path": "compressed/Image-00325",
+            "size": 257758,
+            "hash": "343d7fd948c27ff648e660d17fb923a2c65b2d9a0651bae0665475f3924d5f1d",
+            "instance_number": 49,
+            "slice_location": -26.19835472,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.726"
+          },
+          {
+            "path": "compressed/Image-00326",
+            "size": 257486,
+            "hash": "f07189f46b3c0599dedd02e7687bbd84a02800c235a7bc8217d3102a3e280141",
+            "instance_number": 50,
+            "slice_location": -27.19451904,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.727"
+          }
+        ],
+        "stats": {
+          "original_size_bytes": 27064954,
+          "compressed_size_bytes": 12707074,
+          "compression_ratio_percent": 53.04971144602722
+        }
+      },
+      {
+        "group_id": "scan_1777819034774_jdyo4e5_group1",
+        "group_index": 1,
+        "slice_count": 9,
+        "files": [
+          {
+            "path": "compressed/Image-00327",
+            "size": 257902,
+            "hash": "9df1589fbbc509b81c715991bee49df561798066012f932c97f7fce4b2ff1c37",
+            "instance_number": 51,
+            "slice_location": -28.19068336,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.728"
+          },
+          {
+            "path": "compressed/Image-00328",
+            "size": 258274,
+            "hash": "767d602f05dcb6e997332b0bfa135834ef0cef050ee20cd9746fde2d325e1f94",
+            "instance_number": 52,
+            "slice_location": -29.18684769,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.729"
+          },
+          {
+            "path": "compressed/Image-00329",
+            "size": 258634,
+            "hash": "a85c72d1be63a5ff7f9c21130a28941860ad147b248a670dbc4713ff15fefd9d",
+            "instance_number": 53,
+            "slice_location": -30.18301201,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.730"
+          },
+          {
+            "path": "compressed/Image-00330",
+            "size": 258640,
+            "hash": "3034fa01cbf906568d91f8832bd9f18037df6f40ba227926173dc18240a1bda2",
+            "instance_number": 54,
+            "slice_location": -31.17917633,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.731"
+          },
+          {
+            "path": "compressed/Image-00331",
+            "size": 259048,
+            "hash": "8521d583668624df1ec5b2addf6f2296b5a153c878bcdc01731eeef31fa58afc",
+            "instance_number": 55,
+            "slice_location": -32.17534256,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.732"
+          },
+          {
+            "path": "compressed/Image-00332",
+            "size": 258688,
+            "hash": "6d7b38df4253345bc8407b0d21d746cda90258c8b5fa62cd9f666f77f342714c",
+            "instance_number": 56,
+            "slice_location": -33.17150879,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.733"
+          },
+          {
+            "path": "compressed/Image-00333",
+            "size": 259316,
+            "hash": "ec0a67ceef7ec8c9e344274dad4a107f640f049d63b9aae6d9518f6f54e6b376",
+            "instance_number": 57,
+            "slice_location": -34.16767502,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.734"
+          },
+          {
+            "path": "compressed/Image-00334",
+            "size": 258914,
+            "hash": "03d6096d9741e0011c6cd884fe7b20c043fa32b79884cd199a7a2a6614b659ac",
+            "instance_number": 58,
+            "slice_location": -35.16384125,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.735"
+          },
+          {
+            "path": "compressed/Image-00335",
+            "size": 260140,
+            "hash": "a71012b61da8d1fa49853821412fb06e106210e9f6b2b5ad904b8140dcea04c0",
+            "instance_number": 59,
+            "slice_location": -36.16000748,
+            "sop_instance_uid": "1.2.840.113619.2.408.14196467.3081994.26862.1646358125.736"
+          }
+        ],
+        "stats": {
+          "original_size_bytes": 4871682,
+          "compressed_size_bytes": 2329556,
+          "compression_ratio_percent": 52.1816900199972
+        }
+      }
+    ],
+    "stats": {
+      "original_size_bytes": 31936636,
+      "compressed_size_bytes": 15036630,
+      "compression_ratio_percent": 52.91730162187401,
+      "files_processed": 59,
+      "files_failed": 0
+    }
+  }
+}

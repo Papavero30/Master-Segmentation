@@ -11,9 +11,20 @@ func RegisterSegmentationRoutes(
 	segmentationController *controller.SegmentationController,
 	authMiddleware *middleware.AuthMiddleware,
 ) {
-	// Segmentation routes (protected)
-	segmentationRouter := r.PathPrefix("/api/segmentation").Subrouter()
-	segmentationRouter.Use(authMiddleware.RequireAuth)
+	registerSegmentationRoutesForPrefix(r.PathPrefix("/segmentation").Subrouter(), segmentationController, authMiddleware)
+
+	// Backward compatibility for any previous accidental /api/api/segmentation usage.
+	registerSegmentationRoutesForPrefix(r.PathPrefix("/api/segmentation").Subrouter(), segmentationController, authMiddleware)
+}
+
+func registerSegmentationRoutesForPrefix(
+	segmentationRouter *mux.Router,
+	segmentationController *controller.SegmentationController,
+	authMiddleware *middleware.AuthMiddleware,
+) {
+	if authMiddleware != nil {
+		segmentationRouter.Use(authMiddleware.RequireAuth)
+	}
 
 	// POST /api/segmentation/segment - Initiate segmentation
 	segmentationRouter.HandleFunc("/segment", segmentationController.SegmentSlice).Methods("POST", "OPTIONS")
@@ -26,6 +37,15 @@ func RegisterSegmentationRoutes(
 
 	// DELETE /api/segmentation/task/:taskId - Cancel task
 	segmentationRouter.HandleFunc("/task/{taskId}", segmentationController.CancelTask).Methods("DELETE", "OPTIONS")
+
+	// GET /api/segmentation/experiments - List experiment history
+	segmentationRouter.HandleFunc("/experiments", segmentationController.ListExperiments).Methods("GET", "OPTIONS")
+
+	// GET /api/segmentation/experiments/:taskId - Get experiment details + chunk logs
+	segmentationRouter.HandleFunc("/experiments/{taskId}", segmentationController.GetExperimentDetail).Methods("GET", "OPTIONS")
+
+	// GET /api/segmentation/stats/compare?mode_a=...&mode_b=...
+	segmentationRouter.HandleFunc("/stats/compare", segmentationController.CompareStats).Methods("GET", "OPTIONS")
 
 	// GET /api/segmentation/tasks - List all tasks (admin only)
 	// segmentationRouter.HandleFunc("/tasks", segmentationController.ListTasks).Methods("GET", "OPTIONS")

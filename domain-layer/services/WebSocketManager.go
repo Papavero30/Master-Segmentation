@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"sync"
 	"time"
 
@@ -13,13 +14,19 @@ import (
 
 // ProgressUpdate represents a real-time progress update
 type ProgressUpdate struct {
-	TaskID      string    `json:"task_id"`
-	Status      string    `json:"status"`
-	Progress    int       `json:"progress"`
-	TotalChunks int       `json:"total_chunks"`
-	Completed   int       `json:"completed"`
-	Message     string    `json:"message"`
-	Timestamp   time.Time `json:"timestamp"`
+	TaskID      string         `json:"task_id"`
+	Status      string         `json:"status"`
+	Progress    int            `json:"progress"`
+	TotalChunks int            `json:"total_chunks"`
+	Completed   int            `json:"completed"`
+	Message     string         `json:"message"`
+	Timestamp   time.Time      `json:"timestamp"`
+	ClusterMode string         `json:"cluster_mode"`
+	WorkerStats map[string]int `json:"worker_stats"`
+}
+
+type chunkLogPayload struct {
+	WorkerName string `json:"worker_name"`
 }
 
 // WebSocketConnection wraps a websocket connection with metadata
@@ -154,10 +161,22 @@ func (m *WebSocketManager) StartProgressMonitor(taskID string, stopChan <-chan s
 			var task struct {
 				Status      string `json:"status"`
 				TotalChunks int    `json:"total_chunks"`
+				ClusterMode string `json:"cluster_mode"`
 			}
 			if err := json.Unmarshal([]byte(taskJSON), &task); err != nil {
 				m.logger.Error("Failed to unmarshal task: %v", err)
 				continue
+			}
+
+			workerStats, err := m.collectWorkerStats(taskID)
+			if err != nil {
+				m.logger.Warning("Failed to collect worker stats for task %s: %v", taskID, err)
+				workerStats = map[string]int{}
+			}
+
+			clusterMode := task.ClusterMode
+			if clusterMode == "" {
+				clusterMode = "legacy"
 			}
 
 			// Broadcast update
@@ -169,6 +188,8 @@ func (m *WebSocketManager) StartProgressMonitor(taskID string, stopChan <-chan s
 				Completed:   completed,
 				Message:     getProgressMessage(progress, task.Status),
 				Timestamp:   time.Now(),
+				ClusterMode: clusterMode,
+				WorkerStats: workerStats,
 			}
 
 			m.BroadcastProgress(taskID, update)
@@ -184,6 +205,44 @@ func (m *WebSocketManager) StartProgressMonitor(taskID string, stopChan <-chan s
 			return
 		}
 	}
+}
+
+func (m *WebSocketManager) collectWorkerStats(taskID string) (map[string]int, error) {
+	stats := make(map[string]int)
+	pattern := fmt.Sprintf("segmentation:chunklog:%s:*", taskID)
+	var cursor uint64
+
+	for {
+		keys, nextCursor, err := m.redisClient.Scan(m.ctx, cursor, pattern, 100).Result()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, key := range keys {
+			payload, err := m.redisClient.Get(m.ctx, key).Result()
+			if err != nil {
+				continue
+			}
+
+			entry := chunkLogPayload{}
+			if err := json.Unmarshal([]byte(payload), &entry); err != nil {
+				continue
+			}
+
+			if entry.WorkerName == "" {
+				continue
+			}
+
+			stats[entry.WorkerName]++
+		}
+
+		cursor = nextCursor
+		if cursor == 0 {
+			break
+		}
+	}
+
+	return stats, nil
 }
 
 func getProgressMessage(progress int, status string) string {

@@ -1,5 +1,13 @@
 # Prometheus Configuration
 # Path: monitoring/prometheus.yml
+#
+# Cluster topology (per 2026-05-18):
+#   - Master (Laptop)  : RTX 3050Ti Mobile, runs Backend + S1 baseline worker
+#   - Worker 1 (PC-A)  : RTX 5080 (16 GB), 1 GPU = 1 worker container, port 8001
+#   - Worker 2 (PC-B)  : RTX 5080 (16 GB), 1 GPU = 1 worker container, port 8001
+# Distribution strategy: volume-level (1 scan per task). Chunk-level is no
+# longer used in production; this config only scrapes the volume-level
+# worker container per node.
 
 global:
   scrape_interval: 15s
@@ -9,36 +17,64 @@ global:
     environment: 'development'
 
 scrape_configs:
-  # Backend metrics
+  # Backend orchestrator metrics
   - job_name: 'brainnav-backend'
     static_configs:
       - targets: ['brainnav-backend:8443']
         labels:
           service: 'backend'
+          node: 'master'
 
-  # RabbitMQ metrics
+  # RabbitMQ broker metrics
   - job_name: 'rabbitmq'
     static_configs:
       - targets: ['rabbitmq:15692']
         labels:
           service: 'rabbitmq'
+          node: 'master'
 
-  # Redis metrics (requires redis_exporter)
+  # Redis metrics (via redis_exporter sidecar)
   - job_name: 'redis'
     static_configs:
       - targets: ['redis-exporter:9121']
         labels:
           service: 'redis'
+          node: 'master'
 
-  # Worker metrics (custom exporter in Python)
-  - job_name: 'segmentation-workers'
-    dns_sd_configs:
-      - names:
-          - 'segmentation-worker'
-        type: 'A'
-        port: 8000
+  # Baseline worker running locally on master (S1 only)
+  - job_name: 'segmentation-worker-master'
+    static_configs:
+      - targets: ['segmentation-worker-master:8000']
+        labels:
+          service: 'segmentation-worker'
+          node: 'master'
+          role: 'baseline'
+          gpu: 'rtx-3050ti-mobile'
+
+  # Worker 1: PC-A (RTX 5080) — 1 GPU, 1 container, port 8001
+  - job_name: 'segmentation-worker-pc-a'
+    static_configs:
+      - targets: ['10.28.83.228:8001']
+        labels:
+          service: 'segmentation-worker'
+          node: 'pc-a'
+          role: 'worker-1'
+          gpu: 'rtx-5080'
+
+  # Worker 2: PC-B (RTX 5080) — 1 GPU, 1 container, port 8001
+  - job_name: 'segmentation-worker-pc-b'
+    static_configs:
+      - targets: ['10.28.83.215:8001']
+        labels:
+          service: 'segmentation-worker'
+          node: 'pc-b'
+          role: 'worker-2'
+          gpu: 'rtx-5080'
 
   # Prometheus self-monitoring
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+          node: 'master'
